@@ -1,41 +1,34 @@
-from kivy.app import App
-from kivy.uix.label import Label
-from kivy.graphics import Rectangle, Color
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.button import Button
-from kivy.uix.label import Label
-from kivy.graphics import Color, Rectangle
 from kivy.lang import Builder
-from kivy.uix.popup import Popup
-import testing_audio
+from kivymd.app import MDApp
+from kivymd.uix.button import MDFlatButton
+from kivymd.uix.dialog import MDDialog
 
-class RootWidget(App):
-    def build(self): 
-        btn = Button(text ="Push Me !", 
-                   font_size ="20sp", 
-                   background_color =(1, 1, 1, 1), 
-                   color =(1, 1, 1, 1), 
-                   size =(32, 32), 
-                   size_hint =(.2, .2), 
-                   pos =(300, 250))
+KV = '''
+Screen:
+    FloatLayout:
+        MDRaisedButton:
+            text: "ALERT DIALOG"
+            pos_hint: {'center_x': .5, 'center_y': .5}
+            on_release: app.show_alert_dialog()
 
-        btn.bind(on_press = self.callback) 
-        return btn
+'''
 
-    def callback(self, event):
-        return testing_audio.run_cmd()
-        # print("button pressed") 
-        # print('Yoooo !!!!!!!!!!!')
+class JarvisApp(MDApp):
+    dialog = None
 
+    def build(self):
+        self.theme_cls.primary_palette = "Green"
+        return Builder.load_string(KV)
 
-root = RootWidget()
-root.run()
+    def show_alert_dialog(self):
+        txtclr = [0, 1, 1, 1 ] #text color in rgba value
+        c_button = MDFlatButton(text="CANCEL", text_color=txtclr, on_release= self.close_fun)
+        d_button = MDFlatButton(text="DISCARD", text_color=txtclr)
 
-# class ActionApp(App):
-    # def build(self):
-        # return RootWidget()
+        self.dialog = MDDialog(text="Discard draft?",radius = [30, 7, 30, 7], buttons=[c_button, d_button])
+        self.dialog.open()
 
-# if __name__ == "__main__":
-#     ActionApp().run()
-#     RootWidget().run()
- 
+    def close_fun(self, obj):
+        self.dialog.dismiss()
+
+JarvisApp().run()
